@@ -45,7 +45,12 @@ C_MENU = ("Main",
 
 
 # FUNCTIONS
-def get_user_input():
+def get_user_input() -> int:
+    """
+    Takes a picture using the webcam and gets a number representing the gesture from it
+    Should only be called from an @app.route method, since it references request to get the sender IP
+    :return: The number which represents the gesture in the picture taken
+    """
     remote_address = request.remote_addr  # request.headers['X-Real-IP']
 
     # determine the path to save the file to
@@ -76,10 +81,20 @@ def get_user_input():
 
 
 def number_list_to_string(l) -> str:
+    """
+    Convert a certain type of list to an all letters and digits string that can be parsed back into a list
+    :param l: list whose only elements are of type int
+    :return: str representation of l with brackets stripped and commas replaced by a letter
+    """
     return str(l)[1:-1].replace(' ', '').replace(',', 'q')
 
 
 def string_to_number_list(s) -> list:
+    """
+    Convert an output of number_list_to_string back into a list
+    :param s: an output of number_list_to_string
+    :return: the list represented by the string
+    """
     return ast.literal_eval("[" + s.replace('q', ',') + "]")
 
 
