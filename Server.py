@@ -28,13 +28,14 @@ from Gesture_Detection import gesture_detection
 # TODO: think about using a config
 HOST = "127.0.0.1"
 PORT = "4001"
-CONTACT = "cole@cairene.net"  # where the emails are being sent
+CONTACT = "msmith17@berkeley.edu"  # where the emails are being sent
 
 AUTO_REFRESH_SECONDS = 5
 auto_refresh_milliseconds = AUTO_REFRESH_SECONDS * 1000
-MENU = [("Main", ["Hamburger", "Sandwich"]),
-        ("Topping", ["Cheese", "Tomato", "Onions", "Pickles", "Ketchup"]),
-        ("Drink", ["Soda", "Water", "Milk"])]
+MENU = [("Drink", ["Coke", "Water", "Milk", "Wine"]),
+        ("Appetizer", ["Crab Cakes", "Spring Rolls", "Cheese", "Bread and Butter", "Brussel Sprouts"]),
+        ("Main", ["Prime Rib", "Cheese Burger", "Spaghetti", "Sandwhich", "Ham"]),
+        ("Dessert", ["Cheesecake", "Creme Brule", "Brownie", "Banana Split", "Ice Cream Sundae"])]
 menu_len = len(MENU)
 C_MENU = ("Main",
                 {"Hotdog": ("Toppings",
