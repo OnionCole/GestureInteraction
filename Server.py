@@ -18,6 +18,9 @@ import os
 import ast
 import traceback
 
+from Messenger import Messenger
+
+
 # from Gesture_Detection import gesture_detection
 gesture_detection = lambda x: 0  # TODO: use the above imported method
 
@@ -25,6 +28,7 @@ gesture_detection = lambda x: 0  # TODO: use the above imported method
 # TODO: think about using a config
 HOST = "127.0.0.1"
 PORT = "4001"
+CONTACT = "cole@cairene.net"  # where the emails are being sent
 
 AUTO_REFRESH_SECONDS = 5
 auto_refresh_milliseconds = AUTO_REFRESH_SECONDS * 1000
@@ -104,6 +108,9 @@ def main_page():
 </body>
 </html>
         """)
+
+        # send an email off with the input
+        Messenger(contact=CONTACT, msg=str(total_input)).send()  # TODO: probably? should spin a thread for this so return can happen quickly
 
         return page_to_serve.render(total_input=str(total_input))
     else:  # we need more input
