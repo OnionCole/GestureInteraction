@@ -90,13 +90,18 @@ def main_page():
     except:  # TODO: add exceptions to be clean
         print(traceback.format_exc())
         total_input = []
-    total_input_len = len(total_input)
 
-    if total_input_len >= menu_len:  # if we have received all the input we want
+    # determine display for next item
+    next_item_title, next_item_list = ("", []) if len(total_input) + 1 >= menu_len else MENU[len(total_input) + (0 if first else 1)]
+
+    # get user input
+    if not first:
+        total_input.append(get_user_input())  # if the index is 0, we need to show the user what we are asking before we take an image
+
+    if len(total_input) >= menu_len:  # if we have received all the input we want
 
         # template
-        page_to_serve = Template("""
-<!DOCTYPE html>
+        page_to_serve = Template("""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -113,17 +118,9 @@ def main_page():
         Messenger(contact=CONTACT, msg=str(total_input)).send()  # TODO: probably? should spin a thread for this so return can happen quickly
 
         return page_to_serve.render(total_input=str(total_input))
-    else:  # we need more input
 
-        # determine display for next item
-        next_item_title, next_item_list = ("", []) if total_input_len + 1 >= menu_len else MENU[total_input_len + (0 if first else 1)]
-
-        # get user input
-        if not first:
-            total_input.append(get_user_input())  # if the index is 0, we need to show the user what we are asking before we take an image
-
-        # template
-        return render_template('menu.html', title=next_item_title, options=next_item_list, auto_refresh_seconds=AUTO_REFRESH_SECONDS, total_input=number_list_to_string(total_input))
+    # we need more input
+    return render_template('menu.html', title=next_item_title, options=next_item_list, auto_refresh_seconds=AUTO_REFRESH_SECONDS, total_input=number_list_to_string(total_input))
 
 
 @app.route('/simple', methods=['GET'], endpoint='simple')
