@@ -28,7 +28,9 @@ PORT = "4001"
 
 AUTO_REFRESH_SECONDS = 5
 auto_refresh_milliseconds = AUTO_REFRESH_SECONDS * 1000
-MENU = ["Cheese", "Tomato", "Onions", "Pickles", "Ketchup"]
+MENU = [("Main", ["Hamburger", "Sandwich"]),
+        ("Topping", ["Cheese", "Tomato", "Onions", "Pickles", "Ketchup"]),
+        ("Drink", ["Soda", "Water", "Milk"])]
 menu_len = len(MENU)
 
 
@@ -107,15 +109,14 @@ def main_page():
     else:  # we need more input
 
         # determine display for next item
-        next_item = None if total_input_len + 1 >= menu_len else MENU[total_input_len + (0 if first else 1)]
+        next_item_title, next_item_list = ("", []) if total_input_len + 1 >= menu_len else MENU[total_input_len + (0 if first else 1)]
 
         # get user input
         if not first:
             total_input.append(get_user_input())  # if the index is 0, we need to show the user what we are asking before we take an image
 
         # template
-        return render_template('menu.html', title="Menu", options=MENU, auto_refresh_seconds=AUTO_REFRESH_SECONDS, total_input=number_list_to_string(total_input))
-        #return page_to_serve.render(auto_refresh_milliseconds=auto_refresh_milliseconds, total_input=number_list_to_string(total_input), next_item=next_item)
+        return render_template('menu.html', title=next_item_title, options=next_item_list, auto_refresh_seconds=AUTO_REFRESH_SECONDS, total_input=number_list_to_string(total_input))
 
 
 @app.route('/simple', methods=['GET'], endpoint='simple')
