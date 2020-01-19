@@ -3,7 +3,6 @@ from google.cloud import automl
 def gesture_detection(file_path):
     project_id = 'gesture-detection-265519'
     model_id = 'ICN7380709295957999616'
-    #file_path = '1579420371.6331792 real_good.png'
 
     prediction_client = automl.PredictionServiceClient()
 
@@ -16,6 +15,7 @@ def gesture_detection(file_path):
     with open(file_path, 'rb') as content_file:
         content = content_file.read()
 
+
     image = automl.types.Image(image_bytes=content)
     payload = automl.types.ExamplePayload(image=image)
 
@@ -24,7 +24,8 @@ def gesture_detection(file_path):
     params = {'score_threshold': '0.5'}
 
     response = prediction_client.predict(model_full_id, payload, params)
-    print('Prediction results:')
+
+    display_dict = {"ONE" : 1, "TWO" : 2, "THREE" : 3, "FOUR" : 4, "FIVE" : 5, "NONE" : 0}
     for result in response.payload:
-        print(u'Predicted class name: {}'.format(result.display_name))
-        print(u'Predicted class score: {}'.format(result.classification.score))
+        return display_dict[result.display_name]
+    return 0
