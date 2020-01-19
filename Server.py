@@ -36,6 +36,11 @@ MENU = [("Main", ["Hamburger", "Sandwich"]),
         ("Topping", ["Cheese", "Tomato", "Onions", "Pickles", "Ketchup"]),
         ("Drink", ["Soda", "Water", "Milk"])]
 menu_len = len(MENU)
+C_MENU = ("Main",
+                {"Hotdog": ("Toppings",
+                                    {"Ketchup": None, "Sauerkraut": None}),
+                "Prime Rib": ("Sides",
+                                    {"Creamed Corn": None})})
 
 
 # FUNCTIONS
@@ -83,6 +88,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'], endpoint='main_page')
 def main_page():
+
     # get args
     first = not request.args.get("f", '')  # is this the first ping
     total_input = request.args.get("ti", '')  # total input so far
@@ -121,7 +127,70 @@ def main_page():
     next_item_title, next_item_list = MENU[len(total_input)]
 
     # we need more input
-    return render_template('menu.html', title=next_item_title, options=next_item_list, auto_refresh_seconds=AUTO_REFRESH_SECONDS, total_input=number_list_to_string(total_input))
+    return render_template('menu.html', title=next_item_title, options=next_item_list, auto_refresh_seconds=AUTO_REFRESH_SECONDS, still_first="F",
+            total_input=number_list_to_string(total_input))
+
+
+@app.route('/causal', methods=['GET'], endpoint='causal_page')
+def causal_page():
+
+    # get args
+    first = not request.args.get("f", '')  # is this the first ping
+    keep_first = False
+    total_input = request.args.get("ti", '')  # total input so far
+    try:
+        total_input = string_to_number_list(total_input)
+    except:  # TODO: add exceptions to be clean
+        print(traceback.format_exc())
+        total_input = []
+
+    # get user input
+    if not first:
+        total_input.append(get_user_input())  # if the index is 0, we need to show the user what we are asking before we take an image
+
+    # determine display for next item
+    # TODO: is the below proper clean?
+    try:
+        if len(total_input) > 0:
+            assert total_input[-1] != 0
+        found_tuple = C_MENU
+        for input_value in total_input:
+            found_tuple = found_tuple[1][list(found_tuple[1].keys())[input_value - 1]]
+    except (AssertionError, KeyError, IndexError):  # we got an unacceptable input
+        total_input.pop()
+        found_tuple = C_MENU
+        for input_value in total_input[:-1]:
+            found_tuple = found_tuple[1][list(found_tuple[1].keys())[input_value - 1]]
+        if first:
+            keep_first = True
+
+    if found_tuple is None:  # if we have received all the input we want
+
+        # template
+        page_to_serve = Template("""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GestureInteraction</title>
+</head>
+<body>
+    Your Input Was:
+    {{total_input}}
+</body>
+</html>
+        """)
+
+        # send an email off with the input
+        Messenger(contact=CONTACT, msg=str(total_input)).send()  # TODO: probably? should spin a thread for this so return can happen quickly
+
+        return page_to_serve.render(total_input=str(total_input))
+
+    # we need more input
+
+    next_item_title, next_item_list = found_tuple
+
+    return render_template('menu.html', title=next_item_title, options=next_item_list, auto_refresh_seconds=AUTO_REFRESH_SECONDS, still_first="" if keep_first else "F",
+            total_input=number_list_to_string(total_input))
 
 
 @app.route('/simple', methods=['GET'], endpoint='simple')
