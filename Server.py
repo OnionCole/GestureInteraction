@@ -43,7 +43,15 @@ def get_user_input():
     # get the webcam picture
     camera = cv2.VideoCapture(0)
     return_value, image = camera.read()
-    cv2.imwrite(img_path, image)
+
+    # reduce image to easy parse
+    img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    img = cv2.GaussianBlur(img, (7, 7), 3)
+    img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
+    ret, final_image = cv2.threshold(img, 25, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+
+    # write to png file
+    cv2.imwrite(img_path, final_image)
 
     # get the gesture output
     gesture_output = gesture_detection(img_path)
