@@ -104,24 +104,27 @@ def main_page():
 
     if len(total_input) >= menu_len:  # if we have received all the input we want
 
-        # template
-        page_to_serve = Template("""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>GestureInteraction</title>
-</head>
-<body>
-    Your Input Was:
-    {{total_input}}
-</body>
-</html>
-        """)
-
         # send an email off with the input
-        Messenger(contact=CONTACT, msg=str(total_input)).send()  # TODO: probably? should spin a thread for this so return can happen quickly
+        #create list of order based on total_input and MENU
+        options = []
+        for i in range(len(MENU)):
+            if total_input[i] != 0 and total_input[i] <= len(MENU[i][1]):
+                options.append(MENU[i][1][total_input[i] - 1])
 
-        return page_to_serve.render(total_input=str(total_input))
+        message = "A client has ordered "
+        first = True
+        for option in options:
+            if first:
+                first = False
+                message += option
+            else:
+                message += ", " + option
+        message += "."
+        print(message)
+
+        Messenger(contact=CONTACT, msg=message).send()  # TODO: probably? should spin a thread for this so return can happen quickly
+
+        return render_template('receipt.html', total_input=str(total_input), orders=options)
 
     # determine display for next item
     next_item_title, next_item_list = MENU[len(total_input)]
