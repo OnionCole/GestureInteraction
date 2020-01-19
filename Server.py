@@ -48,7 +48,8 @@ def get_user_input():
 
     # get the webcam picture
     camera = cv2.VideoCapture(0)
-    return_value, image = camera.read()
+    for _ in range(10):
+        return_value, image = camera.read()
 
     # reduce image to easy parse
     img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
