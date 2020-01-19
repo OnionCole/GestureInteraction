@@ -91,9 +91,6 @@ def main_page():
         print(traceback.format_exc())
         total_input = []
 
-    # determine display for next item
-    next_item_title, next_item_list = ("", []) if len(total_input) + 1 >= menu_len else MENU[len(total_input) + (0 if first else 1)]
-
     # get user input
     if not first:
         total_input.append(get_user_input())  # if the index is 0, we need to show the user what we are asking before we take an image
@@ -118,6 +115,9 @@ def main_page():
         Messenger(contact=CONTACT, msg=str(total_input)).send()  # TODO: probably? should spin a thread for this so return can happen quickly
 
         return page_to_serve.render(total_input=str(total_input))
+
+    # determine display for next item
+    next_item_title, next_item_list = MENU[len(total_input)]
 
     # we need more input
     return render_template('menu.html', title=next_item_title, options=next_item_list, auto_refresh_seconds=AUTO_REFRESH_SECONDS, total_input=number_list_to_string(total_input))
