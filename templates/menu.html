@@ -36,12 +36,6 @@
     transition: all .2s ease-in-out;
     }
 
-    .list-type1 a:hover{
-    background: #d6d4d4;
-    text-decoration:none;
-    transform: scale(1.1);
-    }
-
     .list-type1 a:before{
     content: counter(li);
     counter-increment: li;
@@ -66,6 +60,7 @@
 <body>
   <header>
     <h1>{{title}}</h1>
+    <h4>Hold up your fingers to select the item you want.</h4>
   </header>
     <div class="list-type1">
       <ol>
@@ -84,11 +79,13 @@
     <script>
     var seconds = {{auto_refresh_seconds}};
     var el = document.getElementById('counter');
+    var called = false;
     function incrementSeconds() {
         if (seconds > 0) {
           seconds--;
           el.innerText = "" + seconds + " seconds left.";
-        } else if (seconds == 0){
+        } else if (!called){
+          called = true;
           document.getElementById("var_form").submit();
         }
       }
