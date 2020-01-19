@@ -21,8 +21,8 @@ import traceback
 from Messenger import Messenger
 
 
-# from Gesture_Detection import gesture_detection
-gesture_detection = lambda x: 0  # TODO: use the above imported method
+from Gesture_Detection import gesture_detection
+#gesture_detection = lambda x: 0  # TODO: use the above imported method
 
 # HARDCODED VARIABLES
 # TODO: think about using a config
