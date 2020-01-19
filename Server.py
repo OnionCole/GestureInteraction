@@ -10,6 +10,7 @@ Cole Mameesh Anderson
 from flask import Flask
 from flask import request
 from jinja2 import Template
+from flask import render_template
 import threading
 import cv2
 import time
@@ -25,7 +26,7 @@ gesture_detection = lambda x: 0  # TODO: use the above imported method
 HOST = "127.0.0.1"
 PORT = "4001"
 
-AUTO_REFRESH_SECONDS = 1
+AUTO_REFRESH_SECONDS = 5
 auto_refresh_milliseconds = AUTO_REFRESH_SECONDS * 1000
 MENU = ["Cheese", "Tomato", "Onions", "Pickles", "Ketchup"]
 menu_len = len(MENU)
@@ -105,32 +106,8 @@ def main_page():
             total_input.append(get_user_input())  # if the index is 0, we need to show the user what we are asking before we take an image
 
         # template
-        page_to_serve = Template("""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>GestureInteraction</title>
-</head>
-<body>
-
-    next_item:
-    {{next_item}}
-    
-    <form id="var_form" method="GET">
-        <input type="hidden" name="f" value="F">
-        <input type="hidden" name="ti" value={{total_input}}>
-    </form>
-    
-    <script>
-        var load = setTimeout( function() {
-            document.getElementById("var_form").submit();
-        }, {{auto_refresh_milliseconds}});
-    </script>
-
-</body>
-</html>
-        """)
-        return page_to_serve.render(auto_refresh_milliseconds=auto_refresh_milliseconds, total_input=number_list_to_string(total_input), next_item=next_item)
+        return render_template('menu.html', title="Menu", options=MENU, auto_refresh_seconds=AUTO_REFRESH_SECONDS, total_input=number_list_to_string(total_input))
+        #return page_to_serve.render(auto_refresh_milliseconds=auto_refresh_milliseconds, total_input=number_list_to_string(total_input), next_item=next_item)
 
 
 @app.route('/simple', methods=['GET'], endpoint='simple')
